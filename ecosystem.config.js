@@ -1,12 +1,12 @@
 module.exports = {
     apps : [{
-      name: 'testaustonttu',
+      name: 'testauskoira',
       script: 'main.js',
       env: {
         "NODE_ENV": "PRODUCTION",
       },
       env_hook: {
-        command: 'pm2 pull testaustonttu'
+        command: 'pm2 pull testauskoira'
       }
     }]
   };

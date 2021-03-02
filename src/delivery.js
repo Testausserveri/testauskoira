@@ -35,7 +35,7 @@ const resolveReceiver = (receiver) => {
     });
 }
 const createBlockLink = ({from, subMailbox, key}) => {
-    return `https://tonttu.testausserveri.fi/posti/${key}/block?from=${encodeURIComponent(from.value[0].address)}` + (subMailbox ? `&sub=${encodeURIComponent(subMailbox)}` : '');
+    return `https://koira.testausserveri.fi/posti/${key}/block?from=${encodeURIComponent(from.value[0].address)}` + (subMailbox ? `&sub=${encodeURIComponent(subMailbox)}` : '');
 };
 const chunkString = (string, size, multiline = true) => {
     let matchAllToken = (multiline == true) ? '[^]' : '.';
