@@ -1,0 +1,22 @@
+{
+    "scanInterval": 20,
+    "httpPort": 80,
+    "imap": {
+        "user": "",
+        "password": "",
+        "host": "imap.provider.com",
+        "port": 993,
+        "tls": true,
+        "authTimeout": 3000
+    },
+    "discord": {
+        "defaultGuild": "guild id",
+        "token": "discord bot token"
+    },
+    "mysql": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "database": ""
+    }
+}

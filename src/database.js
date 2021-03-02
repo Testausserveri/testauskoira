@@ -1,5 +1,6 @@
 const config = require('../config.json');
 const mysql = require('mysql2/promise');
+const crypto = require('crypto');
 
 let connection;
 
@@ -64,4 +65,27 @@ const checkBlock = (from, mailbox, sub = '') => {
     });
 }
 
-module.exports = {resolveUserByMailbox, resolveMailboxByKey, addBlock, checkBlock, connection};
+const getRegisteredUsers = () => {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT `mailbox`, `userid` FROM `mailboxes`')
+        .then(([result]) => {
+            resolve(result);
+        })
+    });
+};
+
+const createMailbox = (mailbox, userid) => {
+    return new Promise(async (resolve, reject) => {
+        const key = await crypto.randomBytes(20).toString('hex');
+        connection.execute('INSERT INTO `mailboxes` SET `mailbox`=?, `userid`=?, `key`=?', [mailbox, userid, key])
+        .then(([data]) => {
+            if (data.affectedRows == 1) {
+                resolve();
+            } else {
+                reject();
+            }
+        }).catch(reject);
+    });
+};
+
+module.exports = {resolveUserByMailbox, resolveMailboxByKey, addBlock, checkBlock, getRegisteredUsers, createMailbox, connection};
