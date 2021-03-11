@@ -12,7 +12,7 @@ class MailDatabase {
     }
     resolveUserByMailbox(mailbox) {
         return new Promise((resolve, reject) => {
-            connection.execute('SELECT `userid`, `key` FROM `mailboxes` WHERE `mailbox` = ?', [mailbox])
+            this.connection.execute('SELECT `userid`, `key` FROM `mailboxes` WHERE `mailbox` = ?', [mailbox])
             .then(([[result]]) => {
                 resolve({...result});
             })
@@ -20,7 +20,7 @@ class MailDatabase {
     }
     resolveMailboxByKey(key) {
         return new Promise((resolve, reject) => {
-            connection.execute('SELECT `mailbox`, `userid` FROM `mailboxes` WHERE `key` = ?', [key])
+            this.connection.execute('SELECT `mailbox`, `userid` FROM `mailboxes` WHERE `key` = ?', [key])
             .then(([[result]]) => {
                 if (result) {
                     resolve({...result});
@@ -32,7 +32,7 @@ class MailDatabase {
     }
     addBlock(from, mailbox, sub) {
         return new Promise((resolve, reject) => {
-            connection.execute('INSERT INTO `blocks` SET `from`=?, `mailbox`=?, `sub`=?', [from, mailbox, sub])
+            this.connection.execute('INSERT INTO `blocks` SET `from`=?, `mailbox`=?, `sub`=?', [from, mailbox, sub])
             .then(([data]) => {
                 if (data.affectedRows == 1) {
                     resolve();
@@ -44,7 +44,7 @@ class MailDatabase {
     }
     checkBlock(from, mailbox, sub = '') {
         return new Promise((resolve, reject) => {
-            connection.execute('SELECT `id` FROM `blocks` WHERE `from`=? AND `mailbox`=? AND `sub`=?', [from, mailbox, sub])
+            this.connection.execute('SELECT `id` FROM `blocks` WHERE `from`=? AND `mailbox`=? AND `sub`=?', [from, mailbox, sub])
             .then(([[data]]) => {
                 resolve(data);
             }).catch(reject);
@@ -53,7 +53,7 @@ class MailDatabase {
     createMailbox(mailbox, userid) {
         return new Promise(async (resolve, reject) => {
             const key = await crypto.randomBytes(20).toString('hex');
-            connection.execute('INSERT INTO `mailboxes` SET `mailbox`=?, `userid`=?, `key`=?', [mailbox, userid, key])
+            this.connection.execute('INSERT INTO `mailboxes` SET `mailbox`=?, `userid`=?, `key`=?', [mailbox, userid, key])
             .then(([data]) => {
                 if (data.affectedRows == 1) {
                     resolve();

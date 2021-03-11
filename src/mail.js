@@ -11,13 +11,8 @@ const databaseClient = require('./database/database.js');
 const loop = () => {
     if (imapServer.connection) {
         
-        databaseClient.mail.getRegisteredUsers()
-        .then((data) => {
-            console.log(data);
-        })
-
         imapServer.fetch()
-        //.then(messages => deliverMessages(messages));
+        .then(messages => deliverMessages(messages));
     } else {
         console.log('Can\'t check for new emails - no IMAP connection');
     }
