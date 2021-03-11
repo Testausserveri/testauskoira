@@ -10,7 +10,6 @@ const databaseClient = require('./database/database.js');
 
 const loop = () => {
     if (imapServer.connection) {
-        
         imapServer.fetch()
         .then(messages => deliverMessages(messages));
     } else {

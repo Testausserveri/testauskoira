@@ -4,6 +4,10 @@ const parseEmail = require('mailparser').simpleParser;
 class Imap {
     connection;
     config;
+    /**
+     * Create new Imap client with given credentials
+     * @param {Object} imapSettings Imap credentials
+     */
     constructor(imapSettings) {
         this.config = {
             imap: imapSettings,
@@ -14,6 +18,10 @@ class Imap {
             }
         };
     }
+    
+    /**
+     * Connect to the IMAP server
+     */
     connect() {
         return imapSimple.connect(this.config)
         .then((con) => {
@@ -22,6 +30,11 @@ class Imap {
             return true;
         });
     }
+
+    /**
+     * Fetch new emails from the IMAP server
+     * @returns {Array.Object} Array of message objects  
+     */
     fetch() {
         return new Promise((resolve, reject) => {
             this.connection.openBox('INBOX').then(() => {

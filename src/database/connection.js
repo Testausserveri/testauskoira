@@ -4,6 +4,10 @@ const mysql = require('mysql2/promise');
 const MailDatabase = require('./mail');
 
 class DatabaseConnection {
+    /**
+     * Create new database client with given credentials
+     * @param {Object} config Mysql connection details
+     */
     constructor(config) {
         this.config = config;
         this.connect()
@@ -11,6 +15,10 @@ class DatabaseConnection {
             this.mail = new MailDatabase(this.connection);
         });
     }
+
+    /**
+     * Connect to the database
+     */
     connect() {
         return new Promise((resolve, reject) => {
             mysql.createConnection(this.config).then((c) => {

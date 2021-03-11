@@ -1,103 +1,113 @@
 const database = require('../database/database.js');
-
+const { formatAddress, chunkString, createBlockLink } = require('../utils');
 const discordClient = require('../discord.js');
 
-const formatAddress = (addr) => {
-    let out = '';
-    addr.value.forEach(contact => {
-        out += `${(contact.name ? contact.name + ' ' : '')}<${contact.address}>; `
-    });
-    return out.trim();
-}
+/**
+ * Resolve bunch of useful data about address
+ * @param {Object} receiver Address object
+ * @returns {Promise<Object>}
+ */
 const resolveReceiver = (receiver) => {
     return new Promise((resolve, reject) => {
-        let name = receiver.address.split('@')[0];
-        let subMailbox; 
-        if (name.includes('+')) {
-            let nameSplit = name.split('+');
-            name = nameSplit[1];
-            subMailbox = nameSplit[0];
+        const mailbox = {
+            name: receiver.address.split('@')[0],
+            sub: '',
+            key: ''
+        };
+        if (mailbox.name.includes('+')) {
+            let nameSplit = mailbox.name.split('+');
+            mailbox.name = nameSplit[1];
+            mailbox.sub = nameSplit[0];
         }
-        database.mail.resolveUserByMailbox(name)
+        database.mail.resolveUserByMailbox(mailbox.name)
         .then(u => {
             if (!u.userid) {
-                reject('User ' + name + ' not found'); return;
+                reject('User ' + mailbox.name + ' not found'); return;
             }
+            mailbox.key = u.key;
             discordClient.users.fetch(u.userid).then(user => {
+                console.log(`[DELIVERY] Delivering mail to ${user.tag} (${receiver.address})`)
                 resolve({
-                    user: user,
-                    messageReceiver: receiver,
-                    key: u.key,
-                    subMailbox: subMailbox,
-                    mailbox: name
+                    discordUser: user, // Discord user
+                    mailbox: mailbox
                 })    
             });
         }) 
     });
 }
-const createBlockLink = ({from, subMailbox, key}) => {
-    return `https://koira.testausserveri.fi/posti/${key}/block?from=${encodeURIComponent(from.value[0].address)}` + (subMailbox ? `&sub=${encodeURIComponent(subMailbox)}` : '');
+
+/**
+ * Sends a Discord embed to the given user
+ * @param {Object} discordUser 
+ * @param {Object} embedData 
+ * @returns {Promise}
+ */
+const sendEmbed = (discordUser, embedData) => {
+    let embed = {color: 0x4881A7, ...embedData};
+    return discordUser.send({embed}).catch(reason => {
+        console.log('Could not deliver mail', reason);
+    });
+}
+
+/**
+ * Checks whether receiver has blocked the sender
+ * @param {*} discordUser (Just gets passed in the resolve)
+ * @param {*} mailbox Receiving mailbox object
+ * @param {*} sender Sender object
+ * @returns {Object}
+ */
+const checkBlock = (discordUser, mailbox, sender) => {
+    return new Promise(async (resolve, reject) => {
+        const blocked = await database.mail.checkBlock(sender.value[0].address, mailbox);
+        if (blocked) {
+            console.log('[DELIVERY] Mail delivery cancelled, block id ' + blocked.id);
+            reject('User has blocked');
+        } else {
+            const blockLink = createBlockLink({
+                from: sender,
+                mailbox: mailbox
+            });
+            resolve({
+                discordUser, 
+                mailbox, 
+                blockLink
+            });
+        }
+    });
 };
-const chunkString = (string, size, multiline = true) => {
-    let matchAllToken = (multiline == true) ? '[^]' : '.';
-    let re = new RegExp(matchAllToken + '{1,' + size + '}', 'g');
-    return string.match(re);
-};
-const deliverMessages = (messages, discordClient) => {
+
+const deliverMessage = (message, receiver) => {
+    resolveReceiver(receiver)
+    .then(({discordUser, mailbox}) => checkBlock(discordUser, mailbox, message.from))
+    .then(async ({discordUser, mailbox, blockLink}) => {
+        // decide whether we can send whole email message in one embed
+        // or do we need to split it up to smaller embed parts
+        if (message.text.toString().length < 1500) {
+            sendEmbed(discordUser, {
+                title: `Lähettäjä: ${formatAddress(message.from)}\nSaaja: ${formatAddress(message.to)}\n\n${message.subject}`,
+                description: '' + message.text + '' + `\n[Estä](${blockLink})`
+            })
+        } else {
+            let messageChunks = chunkString(message.text.toString(), 1950);
+            sendEmbed(discordUser, {
+                title: `Lähettäjä: ${formatAddress(message.from)}\nSaaja: ${formatAddress(message.to)}\n\n${message.subject}`
+            })
+            messageChunks.forEach((messageChunk, index) => {
+                sendEmbed(discordUser, {
+                    description: '' + messageChunk + '' + (index == messageChunks.length - 1 ? `[Estä](${blockLink})` : '')
+                });
+            })
+        }
+    })
+    .catch(reason => {
+        console.log('Couldn\'t deliver message! ', reason);
+    });
+}
+
+const deliverMessages = (messages) => {
     messages.forEach(async (message) => { // go through new messages
         let receivers = message.to.value.filter(to => to.address.includes('testausserveri.fi')); // find all receivers that are our guys
-        receivers.forEach(async (receiver) => {
-            resolveReceiver(receiver, discordClient)
-            .then(async ({user, messageReceiver, key, subMailbox, mailbox}) => {
-                console.log(`[DELIVERY] Delivering mail to ${user.tag} (${messageReceiver.address})`)
-
-                const blocked = await database.mail.checkBlock(message.from.value[0].address, mailbox, subMailbox);
-                if (blocked) {
-                    console.log('[DELIVERY] Mail delivery cancelled, block id ' + blocked.id);
-                    return;
-                }
-
-                const blockLink = createBlockLink({
-                    from: message.from,
-                    subMailbox: subMailbox,
-                    key: key
-                });
-                // decide whether we can send whole email message in one embed
-                // or do we need to split it up to smaller embed parts
-                if (message.text.toString().length < 1500) {
-                    user.send({
-                        embed: {
-                            color: 0x4881A7,
-                            title: `Lähettäjä: ${formatAddress(message.from)}\nSaaja: ${formatAddress(message.to)}\n\n${message.subject}`,
-                            description: '' + message.text + '' + `\n[Estä](${blockLink})`
-                        }
-                    }).catch(reason => {
-                        console.log('Could not deliver mail', reason)
-                    });
-                } else {
-                    let messageChunks = chunkString(message.text.toString(), 1950);
-                    user.send({
-                        embed: {
-                            color: 0x4881A7,
-                            title: `Lähettäjä: ${formatAddress(message.from)}\nSaaja: ${formatAddress(message.to)}\n\n${message.subject}`
-                        }
-                    })
-                    messageChunks.forEach((messageChunk, index) => {
-                        user.send({
-                            embed: {
-                                color: 0x4881A7,
-                                description: '' + messageChunk + '' + (index == messageChunks.length - 1 ? `[Estä](${blockLink})` : '')
-                            }
-                        }).catch(reason => {
-                            console.log('Could not deliver mail chunk ', reason)
-                        });
-                    })
-                }
-            })
-            .catch(reason => {
-                console.log('Couldn\'t resolve user! ', reason);
-            });
-        })
+        receivers.forEach((receiver) => deliverMessage(message, receiver))
     });
 }
 
