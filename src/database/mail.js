@@ -2,6 +2,8 @@
  * @file Mail class used inside the database object
  */
 
+const crypto = require('crypto');
+
 /**
  * @typedef Mailbox
  * @property {String} mailbox Mailbox name
