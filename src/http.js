@@ -1,7 +1,7 @@
 const config = require('../config.json');
 const express = require('express')
 const discordClient = require('./discord.js');
-const { resolveMailboxByKey, addBlock } = require('./database/database.js');
+const database = require('./database/database.js');
 const app = express()
 
 app.get('/posti/:key/block', function (req, res) {
@@ -12,9 +12,9 @@ app.get('/posti/:key/block', function (req, res) {
         const subMailbox = req.query.sub || '';
 
         console.log('[HTTP] Adding block', key, from, subMailbox);
-        resolveMailboxByKey(key)
+        database.mail.resolveMailboxByKey(key)
         .then(async (data) => {
-            addBlock(from, data.mailbox, subMailbox)
+            database.mail.addBlock(from, data.mailbox, subMailbox)
             .then(() => {
                 res.end(prettyHtml(`Estit lähettäjän <b>${from}</b> lähettämästä sähköpostilaatikkoosi <b>${(subMailbox ? subMailbox + '+' + data.mailbox : data.mailbox)}</b>@testausserveri.fi`));
 

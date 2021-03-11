@@ -1,4 +1,4 @@
-const { resolveUserByMailbox, checkBlock } = require('../database/database.js');
+const database = require('../database/database.js');
 
 const discordClient = require('../discord.js');
 
@@ -18,7 +18,7 @@ const resolveReceiver = (receiver) => {
             name = nameSplit[1];
             subMailbox = nameSplit[0];
         }
-        resolveUserByMailbox(name)
+        database.mail.resolveUserByMailbox(name)
         .then(u => {
             if (!u.userid) {
                 reject('User ' + name + ' not found'); return;
@@ -51,7 +51,7 @@ const deliverMessages = (messages, discordClient) => {
             .then(async ({user, messageReceiver, key, subMailbox, mailbox}) => {
                 console.log(`[DELIVERY] Delivering mail to ${user.tag} (${messageReceiver.address})`)
 
-                const blocked = await checkBlock(message.from.value[0].address, mailbox, subMailbox);
+                const blocked = await database.mail.checkBlock(message.from.value[0].address, mailbox, subMailbox);
                 if (blocked) {
                     console.log('[DELIVERY] Mail delivery cancelled, block id ' + blocked.id);
                     return;

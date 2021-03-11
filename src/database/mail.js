@@ -1,8 +1,6 @@
-const DatabaseConnection = require('./connection');
-
-class MailDatabase extends DatabaseConnection {
+class MailDatabase {
     constructor(connection) {
-        super(connection);
+        this.connection = connection;
     } 
     getRegisteredUsers() {
         return new Promise((resolve, reject) => {

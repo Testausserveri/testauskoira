@@ -11,7 +11,7 @@ const databaseClient = require('./database/database.js');
 const loop = () => {
     if (imapServer.connection) {
         
-        databaseClient.getRegisteredUsers()
+        databaseClient.mail.getRegisteredUsers()
         .then((data) => {
             console.log(data);
         })
