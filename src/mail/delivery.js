@@ -1,5 +1,6 @@
-const { resolveUserByMailbox, checkBlock } = require('./database.js');
-const discordClient = require('./discord.js');
+const { resolveUserByMailbox, checkBlock } = require('../database/database.js');
+
+const discordClient = require('../discord.js');
 
 const formatAddress = (addr) => {
     let out = '';

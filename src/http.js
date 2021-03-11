@@ -1,7 +1,7 @@
 const config = require('../config.json');
 const express = require('express')
 const discordClient = require('./discord.js');
-const { resolveMailboxByKey, addBlock } = require('./database.js');
+const { resolveMailboxByKey, addBlock } = require('./database/database.js');
 const app = express()
 
 app.get('/posti/:key/block', function (req, res) {
