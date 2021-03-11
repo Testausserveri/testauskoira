@@ -86,7 +86,7 @@ const deliverMessages = (messages, discordClient) => {
                         user.send({
                             embed: {
                                 color: 0x4881A7,
-                                description: '' + messageChunk + '' + (index == messageChunks.length - 1 ? `[Estä](${createBlockLink(message.from, messageReceiver, key)})` : '')
+                                description: '' + messageChunk + '' + (index == messageChunks.length - 1 ? `[Estä](${blockLink})` : '')
                             }
                         }).catch(reason => {
                             console.log('Could not deliver mail chunk ', reason)
