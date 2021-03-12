@@ -3,7 +3,6 @@ const config = require('../config.json');
 const Imap = require('./mail/imap.js');
 const { deliverMessages } = require('./mail/delivery.js');
 
-const httpServer = require('./http.js');
 const imapServer = new Imap(config.imap);
 const discordClient = require('./discord.js');
 const databaseClient = require('./database/database.js');

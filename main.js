@@ -1,7 +1,3 @@
 const discordClient = require('./src/discord.js');
-const mailBot = require('./src/mail');
-
-discordClient.on('message' , (msg) => {
-    //console.log(msg);
-})
-  
+const httpServer = require('./src/http.js');
+const mailBot = require('./src/mail');  
