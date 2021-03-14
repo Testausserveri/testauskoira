@@ -11,6 +11,7 @@
     },
     "discord": {
         "defaultGuild": "guild id",
+        "autoRole": ["role ids to be given to new members"],
         "token": "discord bot token"
     },
     "mysql": {
