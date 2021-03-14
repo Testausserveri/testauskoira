@@ -4,3 +4,4 @@ config.json
 usersMap.json
 data/
 config.production.json
+stats/
