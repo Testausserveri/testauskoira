@@ -1,7 +1,7 @@
 const config = require('../config.json');
 const Discord = require('discord.js');
 const database = require('./database/database.js');
-const discordClient = new Discord.Client();
+const discordClient = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
 discordClient.on('ready', () => {
     console.log(`[DC] Logged in as ${discordClient.user.tag}!`);
