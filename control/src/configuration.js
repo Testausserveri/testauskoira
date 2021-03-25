@@ -1,4 +1,4 @@
-export const apiServer = 'https://koira.testausserveri.fi';
+export const apiServer = '';
 
 export const memberKeys = {
     "id": "ID",

@@ -18,6 +18,7 @@ function MembersTable(props) {
             if (props.members[index]) {
                 props.setMemberData(props.members[index]);
             }
+            setTimeout(()=>{document.querySelector('#memberEmailInput').focus();}, 5);
         }
     }, [props]);
 
