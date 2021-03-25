@@ -1,4 +1,4 @@
-export const apiServer = '/';
+export const apiServer = '';
 
 export const memberKeys = {
     "id": "ID",
