@@ -1,7 +1,8 @@
-control/
 node_modules/
 config.json
 usersMap.json
 data/
 config.production.json
 stats/
+control_panel/
+controla/

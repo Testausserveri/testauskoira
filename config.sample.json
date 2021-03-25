@@ -1,6 +1,14 @@
 {
     "scanInterval": 20,
-    "httpPort": 80,
+    "http": {
+        "port": 80,
+        "basicAuth": {
+            "users": {
+                "user": "pwd"
+            },
+            "challenge": true
+        }
+    },
     "imap": {
         "user": "",
         "password": "",
@@ -11,7 +19,11 @@
     },
     "discord": {
         "defaultGuild": "guild id",
-        "autoRole": ["role ids to be given to new members"],
+        "autoRole": ["array of role ids to be given to new members"],
+        "karhu": {
+            "msgid": "",
+            "roleid": ""
+        },
         "token": "discord bot token"
     },
     "mysql": {
