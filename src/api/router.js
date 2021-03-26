@@ -96,7 +96,7 @@ router.post('/sendWelcome', upload.single('image'), function (req, res, next) {
             })
             let message = messageTemplate.replace('{MAILBOXNAME}', req.body.mailbox);
             user.send(message);
-            userData[userData.findIndex(a => a.id == user.id)].registered = true;
+            userData[userData.findIndex(a => a.id == user.id)].registered = req.body.mailbox;
 
             res.status(200).end('OK');
         })
