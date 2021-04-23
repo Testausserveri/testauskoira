@@ -10,6 +10,7 @@ export const memberKeys = {
 export const memberTableColumns = [
     "id",
     "createdAt",
+    "joinedTimestamp",
     "username",
     "registered"
 ];
