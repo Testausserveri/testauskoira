@@ -1,10 +1,12 @@
 <p align="center">
-<img src="https://i.imgur.com/dT8RLvv.png" height="100">
+<img src="https://i.imgur.com/dT8RLvv.png" height="150" alt="Testauskoira">
 </p>
 
-**Testauskoira** on yleisbotti, jota käytetään erilaisissa [Testausserverin](https://testausserveri.fi) kylmää konetta vaativissa tehtävissä Discordin puolella.
+**Testauskoira** on yleisbotti, jota käytetään erilaisissa [Testausserverin](https://testausserveri.fi) kylmää konetta vaativissa tehtävissä Discordin puolella. Botin tarkoituksena on tukea palvelimen toimintaa.
 
-## Ominaisuudet
+Botin toimintaa ja sen tietoturvallisuutta voi tutkia tässä repositoriossa, johon on sen lähdekoodi julkaistuna kokonaisuudessaan läpinäkyvyyttä varten.
+
+## Ominaisuudet ja tehtävät
 
 ### Sähköpostien ohjaaminen oikeille vastaanottajille Discord-yksityisviestinä
 <p align="center">
