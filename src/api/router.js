@@ -120,7 +120,12 @@ router.get('/authorized', async function (req, res) {
     })
     .catch((reason) => {
         console.log(reason)
-        res.status(500).end("Server error");
+        if (reason.request.res.statusMessage == 'Unprocessable Entity' && reason.request.path == '/orgs/Testausserveri/invitations') {
+            // already in the org
+            res.redirect("https://github.com/Testausserveri");
+        } else {
+            res.status(500).end("Server error");
+        }
     })
 });
 
