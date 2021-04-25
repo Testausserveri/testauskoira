@@ -115,6 +115,8 @@ router.get('/authorized', async function (req, res) {
             "Authorization": "token " + user.accessToken
         }
     }))
+    .then(() => discordClient.channels.fetch(config.discord.defaultChannel))
+    .then((channel) => channel.send(`${user.login} liittyi Testausserverin GitHub-organisaatioon! 🎉`))
     .then(() => {
         res.redirect("https://github.com/Testausserveri");
     })
