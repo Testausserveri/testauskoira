@@ -9,6 +9,7 @@ const config = require('../../config.json');
 
 const fs = require('fs').promises;
 const path = require('path');
+const axios = require('axios');
 const crypto = require('crypto');
 const mime = require('mime');
 const multer = require('multer');
@@ -46,6 +47,82 @@ router.get('/guildInfo', cache(5), async function (req, res) {
     });
 });
 
+router.get('/authorized', async function (req, res) {
+    console.log('[API] Requested /authorized ', new Date());
+
+    const code = req.query.code; 
+    if (!/^\w{6,32}$/.test(code)) {
+        res.status(400).end("Bad request");
+        return;
+    }
+    let user = {};
+
+    // get user's oauth access token using the code
+    axios({
+        url: "https://github.com/login/oauth/access_token",
+        method: "POST",
+        data: {
+            ...config.github.oauth,
+            code
+        },
+        headers: {
+            "Accept": "application/json"
+        }
+    })
+    .then(({data}) => {
+        user.accessToken = data["access_token"];
+    })
+    // request user info using their access token
+    .then(() => axios({
+        url: "https://api.github.com/user",
+        method: "GET",
+        headers: {
+            "Authorization": "token " + user.accessToken
+        }
+    }))
+    .then(({data}) => {
+        user.id = data["id"];
+        user.login = data["login"];
+    })
+    // invite user to the organization using PAT
+    .then(() => axios({
+        url: "https://api.github.com/orgs/Testausserveri/invitations",
+        method: "POST",
+        data: {
+            "invitee_id": user.id
+        },
+        headers: {
+            "Authorization": "token " + config.github['PAT']
+        }
+    }))
+    // accept invitation on behalf of the user
+    .then(() => axios({
+        url: "https://api.github.com/user/memberships/orgs/Testausserveri",
+        method: "PATCH",
+        data: {
+            "accept": "application/vnd.github.v3+json",
+            "state": "active"
+        },
+        headers: {
+            "Authorization": "token " + user.accessToken
+        }
+    }))
+    // publicize organization membership on behalf of the user
+    .then(() => axios({
+        url: "https://api.github.com/orgs/Testausserveri/public_members/" + user.login,
+        method: "PUT",
+        headers: {
+            "Authorization": "token " + user.accessToken
+        }
+    }))
+    .then(() => {
+        res.redirect("https://github.com/Testausserveri");
+    })
+    .catch((reason) => {
+        console.log(reason)
+        res.status(500).end("Server error");
+    })
+});
 
 // routes after this are password-protected
 router.use(basicAuth(config.http.basicAuth));

@@ -9,6 +9,9 @@ const apiRoute = require('./api/router');
 app.use('/posti/', mailRoute);
 app.use('/api/', apiRoute);
 
+app.get('/joinGithub', (req, res) => {
+  res.redirect('https://github.com/login/oauth/authorize?client_id=' + config.github.oauth['client_id'] + '&redirect_uri=' + config.github['redirect_uri'] + 'scope=write:org');
+})
 // routes after this are password-protected
 app.use(basicAuth(config.http.basicAuth));
 

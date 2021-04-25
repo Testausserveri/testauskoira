@@ -9,6 +9,14 @@
             "challenge": true
         }
     },
+    "github": {
+        "oauth": {
+            "client_id": "",
+            "client_secret": ""
+        },
+        "redirect_uri": "https://testausserveri.fi/api/authorized",
+        "PAT": "organization admin personal access token"
+    },
     "imap": {
         "user": "",
         "password": "",
