@@ -52,7 +52,7 @@ router.get('/authorized', async function (req, res) {
     console.log('[API] Requested /authorized ', new Date());
 
     if (req.query.error) {
-        res.status(400).end("Error\n" + stripHtml(req.query["error_description"]).result.replace(/\+/g, ' '));
+        res.status(400).end("Error: \"" + stripHtml(req.query["error_description"]).result.replace(/\+/g, ' ') + "\"").substr(0, 60);
         return;
     }
 
