@@ -13,7 +13,8 @@
     "mailparser": "^3.1.0",
     "memory-cache": "^0.2.0",
     "multer": "^1.4.2",
-    "mysql2": "^2.2.5"
+    "mysql2": "^2.2.5",
+    "string-strip-html": "^8.2.13"
   },
   "devDependencies": {},
   "scripts": {

@@ -11,6 +11,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const axios = require('axios');
 const crypto = require('crypto');
+const { stripHtml } = require("string-strip-html");
 const mime = require('mime');
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -50,11 +51,17 @@ router.get('/guildInfo', cache(5), async function (req, res) {
 router.get('/authorized', async function (req, res) {
     console.log('[API] Requested /authorized ', new Date());
 
+    if (req.query.error) {
+        res.status(400).end("Error\n" + stripHtml(req.query["error_description"]).result.replace(/+/g, ' '));
+        return;
+    }
+
     const code = req.query.code; 
     if (!/^\w{6,32}$/.test(code)) {
         res.status(400).end("Bad request");
         return;
     }
+
     let user = {};
 
     // get user's oauth access token using the code
