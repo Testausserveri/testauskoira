@@ -42,3 +42,7 @@ Testausserverin tarpeiden mukaan Testauskoira toimii apulaisbottina, joka myönt
 ### Rajapinnat muiden Testausserverin palveluiden yhteentoimivuutta varten
 
 Testauskoira avaa minimaalisia rajapintoja, joita voivat muut Testausserverin palvelut käyttää kommunikoidakseen Testauskoiran kanssa.
+
+### GitHub-organisaatioon kutsuminen
+
+Käyttäjät voivat kutsua itsensä Testausserverin GitHub-organisaatioon sisään itsepalveluna.
