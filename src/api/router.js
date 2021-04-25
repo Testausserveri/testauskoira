@@ -122,7 +122,7 @@ router.get('/authorized', async function (req, res) {
     })
     .catch((reason) => {
         console.log(reason)
-        if (reason.request.res.statusMessage == 'Unprocessable Entity' && reason.request.path == '/orgs/Testausserveri/invitations') {
+        if (reason.request && reason.request.res.statusMessage == 'Unprocessable Entity' && reason.request.path == '/orgs/Testausserveri/invitations') {
             // already in the org
             res.redirect("https://github.com/Testausserveri");
         } else {
