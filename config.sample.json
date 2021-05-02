@@ -29,6 +29,7 @@
         "defaultGuild": "guild id",
         "defaultChannel": "channel id",
         "autoRole": ["array of role ids to be given to new members"],
+        "ambassadorRole": "role of ambassadors",
         "karhu": {
             "msgid": "",
             "roleid": ""
