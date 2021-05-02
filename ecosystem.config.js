@@ -1,7 +1,7 @@
 module.exports = {
     apps : [{
       name: 'testauskoira',
-      script: 'main.js',
+      script: 'src/index.js',
       env: {
         "NODE_ENV": "PRODUCTION",
       },
