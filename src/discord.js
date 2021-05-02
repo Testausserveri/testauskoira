@@ -5,6 +5,8 @@ const discordClient = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REA
 
 discordClient.on('ready', () => {
     console.log(`[DC] Logged in as ${discordClient.user.tag}!`);
+});
+
 // Give roles automatically to new guild members
 discordClient.on('guildMemberAdd', member => {
     member.roles.add(config.discord.autoRole);
