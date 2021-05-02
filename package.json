@@ -1,7 +1,6 @@
 {
   "name": "testauskoira",
   "version": "1.0.0",
-  "description": "",
   "main": "src/index.js",
   "dependencies": {
     "cache-manager": "^3.4.1",
@@ -20,7 +19,6 @@
   "scripts": {
     "start": "node src/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "ahnl",
+  "license": "MIT"
 }
