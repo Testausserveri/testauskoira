@@ -30,10 +30,14 @@
         "defaultChannel": "channel id",
         "autoRole": ["array of role ids to be given to new members"],
         "ambassadorRole": "role of ambassadors",
-        "karhu": {
-            "msgid": "",
-            "roleid": ""
-        },
+        "roleSelfService": [
+            {
+                "description": "some descriptive name",
+                "message": "msg id",
+                "reaction": "emoji id or name if not available",
+                "role": "role id"
+            }
+        ],
         "token": "discord bot token"
     },
     "mysql": {

@@ -11,12 +11,14 @@ discordClient.on('ready', () => {
 discordClient.on('guildMemberAdd', member => {
     member.roles.add(config.discord.autoRole);
 });
-discordClient.on('messageReactionAdd', (reaction, user) => {
-    if (reaction.message.id == config.discord.karhu.msgid) {
-        reaction.message.guild.members.fetch(user.id).then(member => {
-            member.roles.add(config.discord.karhu.roleid).catch(console.error);
-        })
-    }
+discordClient.on('messageReactionAdd', async (reaction, user) => {
+    const role = config.discord.roleSelfService.find(r => r.message == reaction.message.id && r.reaction == ( reaction.emoji.id || reaction.emoji.name ));
+    if (!role) return;
+
+    const member = await reaction.message.guild.members.fetch(user.id);
+    member.roles.add(role.role).catch(console.error);
+
+    console.log(`[DC] Added role ${role.description} to ${user.tag}`)
 });
 
 discordClient.on('message' , (msg) => {
