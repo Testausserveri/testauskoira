@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "dependencies": {
+    "axios": "^0.21.1",
     "cache-manager": "^3.4.1",
     "discord.js": "^12.5.1",
     "express": "^4.17.1",
@@ -15,7 +16,6 @@
     "mysql2": "^2.2.5",
     "string-strip-html": "^8.2.13"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node src/index.js"
   },
