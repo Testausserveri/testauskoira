@@ -35,6 +35,15 @@ fs.readFile(path.join(__dirname, 'messageTemplate.txt'), 'utf-8')
     messageTemplate = data;
 })
 
+let guildRoles;
+discordClient.guilds.fetch(config.discord.defaultGuild)
+.then(guild => {
+    guild.roles.fetch(undefined, false, true)
+    .then(() => {
+        guildRoles = guild.roles.cache.map(role => [role.id, role.name, role.color])
+    })
+})
+
 router.use(cors);
 
 router.get('/guildInfo', cache(5), async function (req, res) {
@@ -137,6 +146,33 @@ router.get('/authorized', async function (req, res) {
         }
     })
 });
+
+router.get('/memberInfo', cache(5), async (req, res) => {
+    if (!req.query.name && !req.query.id){
+        // Update members cache
+        (await discordClient.guilds.fetch(config.discord.defaultGuild)).members.fetch({force: true, cache: false})
+
+        // Build response
+        let query = req.query.name || req.query.id
+        let matches = {}
+        for (let role of guildRoles){
+            if (role.id != query && role.name != query) continue; // Skip if we do not have a match
+            let members = (await discordClient.guilds.fetch(config.discord.defaultGuild)).members.cache.filter(member => member.roles.cache.has(role.id))
+            matches[role.id] = {
+                name: role.name,
+                color: role.color,
+                members
+            }
+        }
+        if (Object.keys(matches).length == 0) {
+            res.status(404).send("No matching roles.")
+        } else {
+            res.status(200).json(matches)
+        }
+    } else {
+        res.status(400).send("Required query parameter not found: name || id")
+    }
+})
 
 // routes after this are password-protected
 router.use(basicAuth(config.http.basicAuth));
