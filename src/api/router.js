@@ -152,7 +152,7 @@ router.get('/memberInfo', cache(5), async (req, res) => {
             .then(guild => {
                 guild.roles.fetch()
                 .then(() => {
-                    guildRoles = guild.roles.cache.map(role => [role.id, role.name, role.color, role.members]);
+                    guildRoles = guild.roles.cache.map(role => ({id: role.id, name: role.name, color: role.color, members: role.members}));
                     resolve();
                 });
             });
