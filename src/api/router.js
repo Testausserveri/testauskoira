@@ -35,15 +35,6 @@ fs.readFile(path.join(__dirname, 'messageTemplate.txt'), 'utf-8')
     messageTemplate = data;
 })
 
-let guildRoles;
-discordClient.guilds.fetch(config.discord.defaultGuild)
-.then(guild => {
-    guild.roles.fetch(undefined, false, true)
-    .then(() => {
-        guildRoles = guild.roles.cache.map(role => [role.id, role.name, role.color])
-    })
-})
-
 router.use(cors);
 
 router.get('/guildInfo', cache(5), async function (req, res) {
@@ -148,20 +139,35 @@ router.get('/authorized', async function (req, res) {
 });
 
 router.get('/memberInfo', cache(5), async (req, res) => {
-    if (!req.query.name && !req.query.id){
-        // Update members cache
-        (await discordClient.guilds.fetch(config.discord.defaultGuild)).members.fetch({force: true, cache: false})
+    if (req.query.name || req.query.id){
+        // Generate roles array
+        let guildRoles;
+        let timeout = false;
+        setTimeout(async () => {
+            res.status(500).send("Timeout while fetching roles.")
+            timeout = true
+        }, 5000)
+        await new Promise((resolve) => {
+            await discordClient.guilds.fetch(config.discord.defaultGuild)
+            .then(guild => {
+                guild.roles.fetch()
+                .then(() => {
+                    guildRoles = guild.roles.cache.map(role => [role.id, role.name, role.color, role.members]);
+                    resolve();
+                });
+            });
+        });
+        if(timeout) return;
 
         // Build response
         let query = req.query.name || req.query.id
         let matches = {}
         for (let role of guildRoles){
             if (role.id != query && role.name != query) continue; // Skip if we do not have a match
-            let members = (await discordClient.guilds.fetch(config.discord.defaultGuild)).members.cache.filter(member => member.roles.cache.has(role.id))
             matches[role.id] = {
                 name: role.name,
                 color: role.color,
-                members
+                members: role.members
             }
         }
         if (Object.keys(matches).length == 0) {
