@@ -152,21 +152,25 @@ router.get('/memberInfo', cache(5), async (req, res) => {
             .then(guild => {
                 guild.roles.fetch()
                 .then(() => {
-                    guildRoles = guild.roles.cache.map(role => ({id: role.id, name: role.name, color: role.color, members: role.members}));
+                    guildRoles = guild.roles.cache.map(role => ({id: role.id, name: role.name, color: role.color, members: role.members, count: role.members.size}));
                     // Filter member data
                     for(let role of guildRoles){
-                        role.members = role.members
-                        .map(member => 
-                            ({
-                                name: member.nickname || member.displayName, 
-                                id: member.id, 
-                                presence: { 
-                                    activity: member.presence.activities, 
-                                    status: member.presence.status, 
-                                    client: member.presence.clientStatus
-                                }
-                            })
-                        )
+                        if(config.discord.publicRoles.includes(role.id)){
+                            role.members = role.members
+                            .map(member => 
+                                ({
+                                    name: member.nickname || member.displayName, 
+                                    id: member.id, 
+                                    presence: { 
+                                        activity: member.presence.activities, 
+                                        status: member.presence.status, 
+                                        client: member.presence.clientStatus
+                                    }
+                                })
+                            )
+                        }else {
+                            role.members = "private"
+                        }
                     }
                     resolve();
                 });
