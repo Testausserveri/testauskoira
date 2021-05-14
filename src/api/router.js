@@ -147,7 +147,7 @@ router.get('/memberInfo', cache(5), async (req, res) => {
             res.status(500).send("Timeout while fetching roles.")
             timeout = true
         }, 5000)
-        await new Promise((resolve) => {
+        await new Promise(async (resolve) => {
             await discordClient.guilds.fetch(config.discord.defaultGuild)
             .then(guild => {
                 guild.roles.fetch()
