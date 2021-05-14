@@ -144,6 +144,7 @@ router.get('/memberInfo', cache(5), async (req, res) => {
         let guildRoles;
         let timeout = false;
         setTimeout(async () => {
+            if(timeout == null) return
             res.status(500).send("Timeout while fetching roles.")
             timeout = true
         }, 5000)
@@ -172,6 +173,7 @@ router.get('/memberInfo', cache(5), async (req, res) => {
                             role.members = "private"
                         }
                     }
+                    timeout = null
                     resolve();
                 });
             });
