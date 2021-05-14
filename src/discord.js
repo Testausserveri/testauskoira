@@ -1,32 +1,43 @@
 const config = require('../config.json');
 const Discord = require('discord.js');
 const database = require('./database/database.js');
-const discordClient = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
-discordClient.on('ready', () => {
-    console.log(`[DC] Logged in as ${discordClient.user.tag}!`);
-});
+function initBot(){
+    const discordClientInternal = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
-// Give roles automatically to new guild members
-discordClient.on('guildMemberAdd', member => {
-    member.roles.add(config.discord.autoRole);
-});
-discordClient.on('messageReactionAdd', async (reaction, user) => {
-    const role = config.discord.roleSelfService.find(r => r.message == reaction.message.id && r.reaction == ( reaction.emoji.id || reaction.emoji.name ));
-    if (!role) return;
+    discordClientInternal.once('ready', () => {
+        console.log(`[DC] Logged in as ${discordClientInternal.user.tag}!`);
+    });
 
-    const member = await reaction.message.guild.members.fetch(user.id);
-    member.roles.add(role.role).catch(console.error);
+    // Give roles automatically to new guild members
+    discordClientInternal.on('guildMemberAdd', member => {
+        member.roles.add(config.discord.autoRole);
+    });
+    discordClientInternal.on('messageReactionAdd', async (reaction, user) => {
+        const role = config.discord.roleSelfService.find(r => r.message == reaction.message.id && r.reaction == ( reaction.emoji.id || reaction.emoji.name ));
+        if (!role) return;
 
-    console.log(`[DC] Added role ${role.description} to ${user.tag}`)
-});
+        const member = await reaction.message.guild.members.fetch(user.id);
+        member.roles.add(role.role).catch(console.error);
 
-discordClient.on('message' , (msg) => {
-    database.bumpMessagesPerDayStatistic(msg.author.id).catch(reason => {
-        console.log(reason)
+        console.log(`[DC] Added role ${role.description} to ${user.tag}`)
+    });
+
+    discordClientInternal.on('message' , (msg) => {
+        database.bumpMessagesPerDayStatistic(msg.author.id).catch(reason => {
+            console.log(reason)
+        })
+    });
+
+    discordClientInternal.once("disconnect", () => {
+        console.log("[DC] Disconnected.")
+        setTimeout(() => initBot(), 1000) // Restart after a second
     })
-});
 
-discordClient.login(config.discord.token);
+    discordClientInternal.login(config.discord.token);
+    return discordClientInternal;
+}
+
+const discordClient = initBot();
 
 module.exports = discordClient;

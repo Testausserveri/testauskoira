@@ -138,6 +138,69 @@ router.get('/authorized', async function (req, res) {
     })
 });
 
+router.get('/memberInfo', cache(5), async (req, res) => {
+    if (req.query.name || req.query.id){
+        // Generate roles array
+        let guildRoles;
+        let timeout = false;
+        setTimeout(async () => {
+            if(timeout == null) return
+            res.status(500).send("Timeout while fetching roles.")
+            timeout = true
+        }, 5000)
+        await new Promise(async (resolve) => {
+            await discordClient.guilds.fetch(config.discord.defaultGuild)
+            .then(guild => {
+                guild.roles.fetch()
+                .then(() => {
+                    guildRoles = guild.roles.cache.map(role => ({id: role.id, name: role.name, color: role.color, members: role.members, count: role.members.size}));
+                    // Filter member data
+                    for(let role of guildRoles){
+                        if(config.discord.publicRoles.includes(role.id)){
+                            role.members = role.members
+                            .map(member => 
+                                ({
+                                    name: member.nickname || member.displayName, 
+                                    id: member.id, 
+                                    presence: { 
+                                        activity: member.presence.activities, 
+                                        status: member.presence.status, 
+                                        client: member.presence.clientStatus
+                                    }
+                                })
+                            )
+                        }else {
+                            role.members = "private"
+                        }
+                    }
+                    timeout = null
+                    resolve();
+                });
+            });
+        });
+        if(timeout) return;
+
+        // Build response
+        let query = req.query.name || req.query.id
+        let matches = {}
+        for (let role of guildRoles){
+            if (role.id != query && role.name != query) continue; // Skip if we do not have a match
+            matches[role.id] = {
+                name: role.name,
+                color: role.color,
+                members: role.members
+            }
+        }
+        if (Object.keys(matches).length == 0) {
+            res.status(404).send("No matching roles.")
+        } else {
+            res.status(200).json(matches)
+        }
+    } else {
+        res.status(400).send("Required query parameter not found: name || id")
+    }
+})
+
 // routes after this are password-protected
 router.use(basicAuth(config.http.basicAuth));
 
