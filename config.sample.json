@@ -30,6 +30,7 @@
         "defaultChannel": "channel id",
         "autoRole": ["array of role ids to be given to new members"],
         "ambassadorRole": "role of ambassadors",
+        "publicRoles": ["array of roles accessible through api"],
         "roleSelfService": [
             {
                 "description": "some descriptive name",
