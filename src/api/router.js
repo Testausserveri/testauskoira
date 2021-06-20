@@ -185,7 +185,8 @@ router.get('/memberInfo', cache(5), async (req, res) => {
                                     presence: { 
                                         activity: parseActivity(member.presence.activities), 
                                         status: member.presence.status.toString()
-                                    }
+                                    },
+                                    avatar: member.user.displayAvatarURL()
                                 })
                             )
                         }else {
