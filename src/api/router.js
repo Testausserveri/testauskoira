@@ -138,6 +138,26 @@ router.get('/authorized', async function (req, res) {
     })
 });
 
+function parseActivity(activities) {
+    const activityTypes = {
+        'PLAYING': 'Pelaa',
+        'WATCHING': 'Katsoo',
+        'LISTENING': 'Kuuntelee',
+        'STREAMING': 'Striimaa'
+    }
+    if (activities.length > 0) {
+        let {name, type, state, emoji} = activities[0];
+
+        return (type == 'CUSTOM_STATUS'
+            ?
+            `${(emoji.name || '')} ${state}`
+            :
+            `${activityTypes[type] || type} ${name}`
+        );
+    } else {
+        return;
+    }
+}
 router.get('/memberInfo', cache(5), async (req, res) => {
     if (req.query.name || req.query.id){
         // Generate roles array
@@ -163,9 +183,8 @@ router.get('/memberInfo', cache(5), async (req, res) => {
                                     name: member.nickname || member.displayName, 
                                     id: member.id, 
                                     presence: { 
-                                        activity: member.presence.activities, 
-                                        status: member.presence.status, 
-                                        client: member.presence.clientStatus
+                                        activity: parseActivity(member.presence.activities), 
+                                        status: member.presence.status.toString()
                                     }
                                 })
                             )
