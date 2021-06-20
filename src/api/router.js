@@ -150,7 +150,7 @@ function parseActivity(activities) {
 
         return (type == 'CUSTOM_STATUS'
             ?
-            `${(emoji.name || '')} ${state}`
+            `${(emoji ? emoji.name : '')} ${state}`
             :
             `${activityTypes[type] || type} ${name}`
         );
