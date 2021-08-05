@@ -27,6 +27,9 @@ function initBot(){
         database.bumpMessagesPerDayStatistic(msg.author.id).catch(reason => {
             console.log(reason)
         })
+        if (msg.content.toLowerCase().startsWith("!github")) {
+            msg.channel.send('Linkki github organisaatioon:\nhttps://koira.testausserveri.fi/github/join');
+        }
     });
 
     discordClientInternal.once("disconnect", () => {
