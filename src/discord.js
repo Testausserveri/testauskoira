@@ -28,7 +28,7 @@ function initBot(){
             console.log(reason)
         })
         if (msg.content.toLowerCase().startsWith("!github")) {
-            msg.channel.send('Linkki github organisaatioon:\nhttps://koira.testausserveri.fi/github/join');
+            msg.channel.send('Linkki github organisaatioon:\n<https://koira.testausserveri.fi/github/join>');
         }
     });
 
