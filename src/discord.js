@@ -35,6 +35,12 @@ function initBot(){
         }
     });
 
+	discordClientInternal.on('messageUpdate', (msg) => {
+		if (/\S*\.trimpsuz\.xyz/i.test(msg.content)) {
+			msg.delete({timeout: 1000});
+		}
+	})
+
     discordClientInternal.once("disconnect", () => {
         console.log("[DC] Disconnected.")
         setTimeout(() => initBot(), 1000) // Restart after a second
