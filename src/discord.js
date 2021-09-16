@@ -35,7 +35,7 @@ function initBot(){
         }
     });
 
-	discordClientInternal.on('messageUpdate', (msg) => {
+	discordClientInternal.on('messageUpdate', (_, msg) => {
 		if (/\S*\.trimpsuz\.xyz/i.test(msg.content)) {
 			msg.delete({timeout: 1000});
 		}
