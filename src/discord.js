@@ -30,7 +30,7 @@ function initBot(){
         if (msg.content.toLowerCase().startsWith("!github")) {
             msg.channel.send('Linkki github organisaatioon:\n<https://koira.testausserveri.fi/github/join>');
         }
-        if (msg.content.includes("img.trimpsuz.xyz") {
+        if (msg.content.includes("img.trimpsuz.xyz")) {
              msg.delete({timeout: 1000});
         }
     });
