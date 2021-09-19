@@ -33,6 +33,9 @@ function initBot(){
         if (msg.content.includes("img.trimpsuz.xyz")) {
              msg.delete({timeout: 1000});
         }
+        if (msg.content.includes("thigs.best")) {
+             msg.delete({timeout: 1000});
+        }
     });
 
     discordClientInternal.once("disconnect", () => {
