@@ -2,6 +2,12 @@ const config = require('../config.json');
 const Discord = require('discord.js');
 const database = require('./database/database.js');
 
+const deleteIfHasBannedContent = (msg) => {
+	if (/\S*\.trimpsuz\.xyz/i.test(msg.content)) {
+		msg.delete({timeout: 1000});
+	}
+}
+
 function initBot(){
     const discordClientInternal = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
@@ -30,15 +36,11 @@ function initBot(){
         if (msg.content.toLowerCase().startsWith("!github")) {
             msg.channel.send('Linkki github organisaatioon:\n<https://koira.testausserveri.fi/github/join>');
         }
-        if (/\S*\.trimpsuz\.xyz/i.test(msg.content)) {
-             msg.delete({timeout: 1000});
-        }
+        deleteIfHasBannedContent(msg);
     });
 
 	discordClientInternal.on('messageUpdate', (_, msg) => {
-		if (/\S*\.trimpsuz\.xyz/i.test(msg.content)) {
-			msg.delete({timeout: 1000});
-		}
+		deleteIfHasBannedContent(msg);
 	})
 
     discordClientInternal.once("disconnect", () => {
