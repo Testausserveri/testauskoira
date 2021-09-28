@@ -47,6 +47,24 @@ class MailDatabase {
     }
 
     /**
+     * Check whether mailbox is available
+     * @param {String} mailbox 
+     * @param {String} userid 
+     * @returns {Boolean}
+     */
+     available(mailbox, userid) {
+        return new Promise((resolve, reject) => {
+            this.connection.execute('SELECT `mailbox`, `userid` FROM `mailboxes` WHERE `mailbox` = ?', [mailbox])
+            .then(([result]) => {
+                resolve(result.length == 0)
+            })
+            .catch(() => {
+                resolve(true)
+            })
+        })
+    }
+
+    /**
      * Resolve user by a mailbox name
      * @param {String} mailbox Name of the mailbox
      * @returns {Promise<Mailbox>} Promise to mailbox object

@@ -273,6 +273,20 @@ router.get('/belongs', async (req, res) => {
     res.end(belongs.toString())
 })
 
+router.get('/available', async (req, res) => {
+    if (!req.query.mailbox) {
+        res.status(400).end("bad request")
+        return
+    }
+    const mailbox = req.query.mailbox
+
+    console.log(`[API] Is ${mailbox} available?`)
+
+    const available = await database.mail.available(mailbox)
+
+    res.end(available.toString())
+})
+
 router.post('/sendWelcome', upload.single('image'), function (req, res, next) {
     console.log(req.file);
 
