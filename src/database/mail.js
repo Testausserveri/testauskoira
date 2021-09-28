@@ -29,6 +29,24 @@ class MailDatabase {
     }
 
     /**
+     * Check whether mailbox belongs to userid
+     * @param {String} mailbox 
+     * @param {String} userid 
+     * @returns {Boolean}
+     */
+    belongsTo(mailbox, userid) {
+        return new Promise((resolve, reject) => {
+            this.connection.execute('SELECT `mailbox`, `userid` FROM `mailboxes` WHERE `mailbox` = ? AND `userid` = ?', [mailbox, userid])
+            .then(([result]) => {
+                resolve(result.length > 0)
+            })
+            .catch(() => {
+                resolve(false)
+            })
+        })
+    }
+
+    /**
      * Resolve user by a mailbox name
      * @param {String} mailbox Name of the mailbox
      * @returns {Promise<Mailbox>} Promise to mailbox object

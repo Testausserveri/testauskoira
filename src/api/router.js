@@ -258,6 +258,21 @@ router.get('/users', (req, res) => {
     res.json(userData);
 })
 
+router.get('/belongs', async (req, res) => {
+    if (!req.query.userid || !req.query.mailbox) {
+        res.status(400).end("bad request")
+        return
+    }
+    const userid = req.query.userid
+    const mailbox = req.query.mailbox
+
+    console.log(`[API] Match query whether ${mailbox} belongs to ${userid}`)
+
+    const belongs = await database.mail.belongsTo(mailbox, userid)
+
+    res.end(belongs.toString())
+})
+
 router.post('/sendWelcome', upload.single('image'), function (req, res, next) {
     console.log(req.file);
 
