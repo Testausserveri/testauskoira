@@ -50,11 +50,13 @@ class Imap {
                         let idHeader = "Imap-Id: " + item.attributes.uid + "\r\n";
                         promises.push(new Promise((resolve, reject) => {
                             parseEmail(idHeader+messageBody, (err, {from, to, subject, text}) => {
-                                // deleting message immediately, we don't need it anymore
-                                // it doesn't move it to trash; it destroys it
-                                this.connection.deleteMessage(item.attributes.uid); 
-
-                                resolve({from, to, subject, text});
+                                const deleteMessage = () => {
+                                    // deleting message immediately, we don't need it anymore
+                                    // it doesn't move it to trash; it destroys it
+                                    this.connection.deleteMessage(item.attributes.uid); 
+                                }
+                                this.connection.addFlags(item.attributes.uid,"SEEN");
+                                resolve({from, to, subject, text, deleteMessage});
                             })
                         }));
                     });

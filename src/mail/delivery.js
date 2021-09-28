@@ -98,6 +98,7 @@ const deliverMessage = (message, receiver) => {
                 });
             })
         }
+        message.deleteMessage();
     })
     .catch(reason => {
         console.log('Couldn\'t deliver message! ', reason);
