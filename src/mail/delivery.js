@@ -106,7 +106,7 @@ const deliverMessage = (message, receiver) => {
 
 const deliverMessages = (messages) => {
     messages.forEach(async (message) => { // go through new messages
-        let receivers = message.to.value.filter(to => to.address.includes('testausserveri.fi')); // find all receivers that are our guys
+        let receivers = message.to.value.filter(to => to.address.includes('testausserveri.fi') && to.address !== 'catch@testausserveri.fi'); // find all receivers that are our guys
         receivers.forEach((receiver) => deliverMessage(message, receiver))
     });
 }
