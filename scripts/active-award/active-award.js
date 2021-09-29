@@ -68,8 +68,8 @@ database.events.on("connected", async () => {
     console.log("Discord is ready", discordClient.user.tag)
 
     console.log("Updating roles")
-    const member = await updateRole("add", guild, current.userid)
     await updateRole("remove", guild, previous.userid)
+    const member = await updateRole("add", guild, current.userid)
 
     if (!member) {
         console.log("Couldn't get current member. Task failed.")
