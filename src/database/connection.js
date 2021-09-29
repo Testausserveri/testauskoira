@@ -2,7 +2,7 @@ const config = require('../../config.json');
 const mysql = require('mysql2/promise');
 
 const MailDatabase = require('./mail');
-
+const { EventEmitter } = require('events')
 class DatabaseConnection {
     /**
      * Create new database client with given credentials
@@ -10,6 +10,7 @@ class DatabaseConnection {
      */
     constructor(config) {
         this.config = config;
+        this.events = new EventEmitter();
         this.connect()
         .then(() => {
             this.mail = new MailDatabase(this.connection);
@@ -24,6 +25,7 @@ class DatabaseConnection {
             mysql.createConnection(this.config).then((c) => {
                 this.connection = c;
                 console.log('[DB] Connected!');
+                this.events.emit('connected');
                 resolve();
                 this.connection.on('error', function(err) {
                     console.log('[DB] Database connection error! ' + err);
