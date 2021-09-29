@@ -5,6 +5,7 @@
 const Discord = require("discord.js")
 const sharp = require("sharp")
 const axios = require("axios")
+const path = require("path")
 
 const database = require("../../src/database/database.js")
 const config = require("../../config.json")
@@ -14,14 +15,14 @@ const awardRole = "892768551591624745"
 const createImage = (avatarUrl) => (new Promise(async (resolve) => {
     const avatarBuffer = (await axios({ url: avatarUrl, responseType: "arraybuffer" })).data
 
-    sharp('mask.png')
+    sharp(path.join(__dirname, "./mask.png"))
     .extractChannel('red')
     .toBuffer()
     .then(alpha => sharp(avatarBuffer)
         .joinChannel(alpha)
         .toBuffer()
         .then(image => sharp(image)
-            .composite([{input: 'blackcomposite.png'}])
+            .composite([{input: path.join(__dirname, "./blackcomposite.png")}])
             .toBuffer()
             .then(output => resolve(output))
         ))
