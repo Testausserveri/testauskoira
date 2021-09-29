@@ -6,3 +6,4 @@ config.production.json
 stats/
 control_panel/
 controla/
+.DS_STORE
