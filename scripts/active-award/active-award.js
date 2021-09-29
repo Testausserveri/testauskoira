@@ -81,7 +81,7 @@ database.events.on("connected", async () => {
     const image = await createImage(avatarUrl)
 
     console.log("Sending message")
-    const channel = await discordClient.channels.fetch("814635271647789086")
+    const channel = await discordClient.channels.fetch(config.discord.defaultChannel)
     await channel.send({files: [{
         attachment: image,
         name: "onnittelut.png"
