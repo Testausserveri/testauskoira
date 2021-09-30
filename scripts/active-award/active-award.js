@@ -30,7 +30,7 @@ const createImage = (avatarUrl) => (new Promise(async (resolve) => {
 
 const getMostActive = async (offsetDays) => {
     const [[data]] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
-    WHERE `date` = CURDATE() - ? AND \
+    WHERE `date` = subdate(current_date, ?) AND \
     `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
     ORDER BY `message_count` DESC LIMIT 1', [parseInt(offsetDays)])
     return {...data}
