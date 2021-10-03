@@ -16,25 +16,25 @@ const createImage = (avatarUrl) => (new Promise(async (resolve) => {
     const avatarBuffer = (await axios({ url: avatarUrl, responseType: "arraybuffer" })).data
 
     sharp(path.join(__dirname, "./mask.png"))
-    .extractChannel('red')
-    .toBuffer()
-    .then(alpha => sharp(avatarBuffer)
-        .joinChannel(alpha)
+        .extractChannel('red')
         .toBuffer()
-        .then(image => sharp(image)
-            .composite([{input: path.join(__dirname, "./blackcomposite.png")}])
+        .then(alpha => sharp(avatarBuffer)
+            .joinChannel(alpha)
             .toBuffer()
-            .then(output => resolve(output))
-        ))
+            .then(image => sharp(image)
+                .composite([{input: path.join(__dirname, "./blackcomposite.png")}])
+                .toBuffer()
+                .then(output => resolve(output))
+            ))
 }))
 
 const getMostActive = async (offsetDays) => {
     const [[data]] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
-    WHERE `date` = subdate(current_date, ?) AND \
-    `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
-    ORDER BY `message_count` DESC LIMIT 5', [parseInt(offsetDays)])
-    return {...data}
-}
+        WHERE `date` = subdate(current_date, ?) AND \
+        `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
+            ORDER BY `message_count` DESC LIMIT 5', [parseInt(offsetDays)])
+            return {...data}
+        }
 
 const discordClient = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL'] })
 discordClient.login(config.discord.token)
@@ -70,11 +70,11 @@ database.events.on("connected", async () => {
 
     console.log("Updating roles")
     await updateRole("remove", guild, previous[0].userid)
-	members = []
+    members = []
     members[0] = await updateRole("add", guild, current[0].userid)
-	for (let m of current) {
-		members.push(await guild.members.fetch(m));
-	}
+    for (let m of current) {
+        members.push(await guild.members.fetch(m));
+    }
 
     if (!members[0]) {
         console.log("Couldn't get current member. Task failed.")
@@ -92,18 +92,18 @@ database.events.on("connected", async () => {
         name: "onnittelut.png"
     }]});
 
-	const leaderboardEmbed = new Discord.MessageEmbed()
-		.setColor("#ffd700")
-		.setTitle("Päivän kultainen Testauskoira tulostaulukko:")
-		.setDescription(`Cumpal vei kultaisen testauskoiran tänään, onnittelut!
-			Tässä vielä top 5 -tulostaulukko eniten viestejä lähettäneistä:
-			\n** 1. ${members[0].user.username}, ${current[0].userid} viestiä
-			\n2. ${members[1].user.username}, ${current[1].userid} viestiä
-			\n3. ${members[2].user.username}, ${current[2].userid} viestiä
-			\n4. ${members[3].user.username}, ${current[3].userid} viestiä
-			\n5. ${members[4].user.username}, ${current[4].userid} viestiä**`)
+    const leaderboardEmbed = new Discord.MessageEmbed()
+        .setColor("#ffd700")
+        .setTitle("Päivän kultainen Testauskoira tulostaulukko:")
+        .setDescription(`${members[0].user.username} vei kultaisen testauskoiran tänään, onnittelut!
+            Tässä vielä top 5 -tulostaulukko eniten viestejä lähettäneistä:
+            \n** 1. ${members[0].user.username}, ${current[0].userid} viestiä
+            \n2. ${members[1].user.username}, ${current[1].userid} viestiä
+            \n3. ${members[2].user.username}, ${current[2].userid} viestiä
+            \n4. ${members[3].user.username}, ${current[3].userid} viestiä
+            \n5. ${members[4].user.username}, ${current[4].userid} viestiä**`)
 
-	await channel.send({ embeds: [leaderboardEmbed]});
+    await channel.send({ embeds: [leaderboardEmbed]});
 
     process.exit()
 })
