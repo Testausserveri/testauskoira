@@ -29,11 +29,11 @@ const createImage = (avatarUrl) => (new Promise(async (resolve) => {
 }))
 
 const getMostActive = async (offsetDays) => {
-    const [[data]] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
+    const [data] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
         WHERE `date` = subdate(current_date, ?) AND \
         `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
             ORDER BY `message_count` DESC LIMIT 5', [parseInt(offsetDays)])
-            return {...data}
+            return [...data].map(item => ({...item}))
         }
 
 const discordClient = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL'] })
@@ -70,10 +70,12 @@ database.events.on("connected", async () => {
 
     console.log("Updating roles")
     await updateRole("remove", guild, previous[0].userid)
-    members = []
-    members[0] = await updateRole("add", guild, current[0].userid)
-    for (let m of current) {
-        members.push(await guild.members.fetch(m));
+    await updateRole("add", guild, current[0].userid)
+
+    let members = []
+    for (let item of current) {
+        const member = await guild.members.fetch(item.userid)
+        members.push(member);
     }
 
     if (!members[0]) {
@@ -87,23 +89,23 @@ database.events.on("connected", async () => {
 
     console.log("Sending message")
     const channel = await discordClient.channels.fetch(config.discord.defaultChannel)
-    await channel.send({files: [{
-        attachment: image,
-        name: "onnittelut.png"
-    }]});
 
+    const attachment = new Discord.MessageAttachment(image, 'onnittelut.png');
     const leaderboardEmbed = new Discord.MessageEmbed()
         .setColor("#ffd700")
         .setTitle("Päivän kultainen Testauskoira tulostaulukko:")
-        .setDescription(`${members[0].user.username} vei kultaisen testauskoiran tänään, onnittelut!
-            Tässä vielä top 5 -tulostaulukko eniten viestejä lähettäneistä:
-            \n** 1. ${members[0].user.username}, ${current[0].userid} viestiä
-            \n2. ${members[1].user.username}, ${current[1].userid} viestiä
-            \n3. ${members[2].user.username}, ${current[2].userid} viestiä
-            \n4. ${members[3].user.username}, ${current[3].userid} viestiä
-            \n5. ${members[4].user.username}, ${current[4].userid} viestiä**`)
+        .attachFiles(attachment)
+        .setImage("attachment://onnittelut.png")
+        .setDescription(`<@${current[0].userid}> vei kultaisen Testauskoiran tänään, onnittelut!
+            Tässä vielä TOP 5 -tulostaulukko eniten viestejä lähettäneistä:
 
-    await channel.send({ embeds: [leaderboardEmbed]});
+            **1. ${members[0].user.username}, ${current[0].message_count} viestiä
+            2. ${members[1].user.username}, ${current[1].message_count} viestiä
+            3. ${members[2].user.username}, ${current[2].message_count} viestiä
+            4. ${members[3].user.username}, ${current[3].message_count} viestiä
+            5. ${members[4].user.username}, ${current[4].message_count} viestiä**`)
+
+    await channel.send(leaderboardEmbed);
 
     process.exit()
 })
