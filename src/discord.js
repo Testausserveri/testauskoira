@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const database = require('./database/database.js');
 
 const deleteIfHasBannedContent = (msg) => {
-	if (/\S*\.trimpsuz\.xyz/i.test(msg.content)) {
+	if (/(?:\S*\.)?trimpsuz\.xyz/i.test(msg.content)) {
 		msg.delete({timeout: 1000});
 	}
 }
