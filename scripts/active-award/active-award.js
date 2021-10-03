@@ -29,12 +29,12 @@ const createImage = (avatarUrl) => (new Promise(async (resolve) => {
 }))
 
 const getMostActive = async (offsetDays) => {
-    const [[data]] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
-    WHERE `date` = subdate(current_date, ?) AND \
-    `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
-    ORDER BY `message_count` DESC LIMIT 1', [parseInt(offsetDays)])
-    return {...data}
-}
+    const [data] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
+        WHERE `date` = subdate(current_date, ?) AND \
+        `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
+            ORDER BY `message_count` DESC LIMIT 5', [parseInt(offsetDays)])
+            return [...data].map(item => ({...item}))
+        }
 
 const discordClient = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL'] })
 discordClient.login(config.discord.token)
@@ -69,25 +69,43 @@ database.events.on("connected", async () => {
     console.log("Discord is ready", discordClient.user.tag)
 
     console.log("Updating roles")
-    await updateRole("remove", guild, previous.userid)
-    const member = await updateRole("add", guild, current.userid)
+    await updateRole("remove", guild, previous[0].userid)
+    await updateRole("add", guild, current[0].userid)
 
-    if (!member) {
+    let members = []
+    for (let item of current) {
+        const member = await guild.members.fetch(item.userid)
+        members.push(member);
+    }
+
+    if (!members[0]) {
         console.log("Couldn't get current member. Task failed.")
         process.exit(1)
     }
 
     console.log("Generating image")
-    const avatarUrl = member.user.displayAvatarURL() + "?size=128"
+    const avatarUrl = members[0].user.displayAvatarURL() + "?size=128"
     const image = await createImage(avatarUrl)
 
     console.log("Sending message")
     const channel = await discordClient.channels.fetch(config.discord.defaultChannel)
-    await channel.send({files: [{
-        attachment: image,
-        name: "onnittelut.png"
-    }]});
-    await channel.send(`Päivän kultainen Testauskoira-palkinnon saaja on <@${current.userid}>! ${member.user.username} lähetti eilen ${current.message_count} viestiä. Onnittelut! 🥳`)
+
+    const attachment = new Discord.MessageAttachment(image, 'onnittelut.png');
+    const leaderboardEmbed = new Discord.MessageEmbed()
+        .setColor("#ffd700")
+        .setTitle("Päivän kultainen Testauskoira tulostaulukko:")
+        .attachFiles(attachment)
+        .setThumbnail("attachment://onnittelut.png")
+        .setDescription(`<@${current[0].userid}> vei kultaisen Testauskoiran tänään, onnittelut!
+            Tässä vielä TOP 5 -tulostaulukko eniten viestejä lähettäneistä:
+
+            **1. ${members[0].user.username}, ${current[0].message_count} viestiä
+            2. ${members[1].user.username}, ${current[1].message_count} viestiä
+            3. ${members[2].user.username}, ${current[2].message_count} viestiä
+            4. ${members[3].user.username}, ${current[3].message_count} viestiä
+            5. ${members[4].user.username}, ${current[4].message_count} viestiä**`)
+
+    await channel.send(leaderboardEmbed);
 
     process.exit()
 })
