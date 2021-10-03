@@ -16,16 +16,16 @@ const createImage = (avatarUrl) => (new Promise(async (resolve) => {
     const avatarBuffer = (await axios({ url: avatarUrl, responseType: "arraybuffer" })).data
 
     sharp(path.join(__dirname, "./mask.png"))
-        .extractChannel('red')
+    .extractChannel('red')
+    .toBuffer()
+    .then(alpha => sharp(avatarBuffer)
+        .joinChannel(alpha)
         .toBuffer()
-        .then(alpha => sharp(avatarBuffer)
-            .joinChannel(alpha)
+        .then(image => sharp(image)
+            .composite([{input: path.join(__dirname, "./blackcomposite.png")}])
             .toBuffer()
-            .then(image => sharp(image)
-                .composite([{input: path.join(__dirname, "./blackcomposite.png")}])
-                .toBuffer()
-                .then(output => resolve(output))
-            ))
+            .then(output => resolve(output))
+        ))
 }))
 
 const getMostActive = async (offsetDays) => {
