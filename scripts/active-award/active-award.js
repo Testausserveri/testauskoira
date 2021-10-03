@@ -95,7 +95,7 @@ database.events.on("connected", async () => {
         .setColor("#ffd700")
         .setTitle("Päivän kultainen Testauskoira tulostaulukko:")
         .attachFiles(attachment)
-        .setImage("attachment://onnittelut.png")
+        .setThumbnail("attachment://onnittelut.png")
         .setDescription(`<@${current[0].userid}> vei kultaisen Testauskoiran tänään, onnittelut!
             Tässä vielä TOP 5 -tulostaulukko eniten viestejä lähettäneistä:
 
