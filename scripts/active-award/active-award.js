@@ -32,7 +32,7 @@ const getMostActive = async (offsetDays) => {
     const [[data]] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
     WHERE `date` = subdate(current_date, ?) AND \
     `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
-    ORDER BY `message_count` DESC LIMIT 1', [parseInt(offsetDays)])
+    ORDER BY `message_count` DESC LIMIT 5', [parseInt(offsetDays)])
     return {...data}
 }
 
@@ -69,16 +69,20 @@ database.events.on("connected", async () => {
     console.log("Discord is ready", discordClient.user.tag)
 
     console.log("Updating roles")
-    await updateRole("remove", guild, previous.userid)
-    const member = await updateRole("add", guild, current.userid)
+    await updateRole("remove", guild, previous[0].userid)
+	members = []
+    members[0] = await updateRole("add", guild, current[0].userid)
+	for (let m of current) {
+		members.push(await guild.members.fetch(m));
+	}
 
-    if (!member) {
+    if (!members[0]) {
         console.log("Couldn't get current member. Task failed.")
         process.exit(1)
     }
 
     console.log("Generating image")
-    const avatarUrl = member.user.displayAvatarURL() + "?size=128"
+    const avatarUrl = members[0].user.displayAvatarURL() + "?size=128"
     const image = await createImage(avatarUrl)
 
     console.log("Sending message")
@@ -87,7 +91,19 @@ database.events.on("connected", async () => {
         attachment: image,
         name: "onnittelut.png"
     }]});
-    await channel.send(`Päivän kultainen Testauskoira-palkinnon saaja on <@${current.userid}>! ${member.user.username} lähetti eilen ${current.message_count} viestiä. Onnittelut! 🥳`)
+
+	const leaderboardEmbed = new Discord.MessageEmbed()
+		.setColor("#ffd700")
+		.setTitle("Päivän kultainen Testauskoira tulostaulukko:")
+		.setDescription(`Cumpal vei kultaisen testauskoiran tänään, onnittelut!
+			Tässä vielä top 5 -tulostaulukko eniten viestejä lähettäneistä:
+			\n** 1. ${members[0].user.username}, ${current[0].userid} viestiä
+			\n2. ${members[1].user.username}, ${current[1].userid} viestiä
+			\n3. ${members[2].user.username}, ${current[2].userid} viestiä
+			\n4. ${members[3].user.username}, ${current[3].userid} viestiä
+			\n5. ${members[4].user.username}, ${current[4].userid} viestiä**`)
+
+	await channel.send({ embeds: [leaderboardEmbed]});
 
     process.exit()
 })
