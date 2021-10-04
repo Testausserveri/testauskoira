@@ -32,7 +32,7 @@ const getMostActive = async (offsetDays) => {
     const [data] = await database.connection.execute('SELECT `userid`, `message_count` FROM `messages_day_stat` \
         WHERE `date` = subdate(current_date, ?) AND \
         `userid` NOT IN (\'464685299214319616\', \'285089672974172161\', \'639844207439118346\', \'812081823727222785\', \'815680099729801218\', \'857723888514629643\', \'798936760096653332\') \
-            ORDER BY `message_count` DESC LIMIT 5', [parseInt(offsetDays)])
+            ORDER BY `message_count` DESC LIMIT 6', [parseInt(offsetDays)])
             return [...data].map(item => ({...item}))
         }
 
@@ -69,6 +69,12 @@ database.events.on("connected", async () => {
     console.log("Discord is ready", discordClient.user.tag)
 
     console.log("Updating roles")
+    for(let i = 0; i < previous.length; ++i) {
+        if(current[i] == previous[0]) {
+            current.splice(i, 1);
+            break;
+        }
+    }
     await updateRole("remove", guild, previous[0].userid)
     await updateRole("add", guild, current[0].userid)
 
@@ -77,6 +83,7 @@ database.events.on("connected", async () => {
         const member = await guild.members.fetch(item.userid)
         members.push(member);
     }
+    let previousWinner = await guild.members.fetch(previous[0].userid);
 
     if (!members[0]) {
         console.log("Couldn't get current member. Task failed.")
@@ -104,6 +111,9 @@ database.events.on("connected", async () => {
             3. ${members[2].user.username}, ${current[2].message_count} viestiä
             4. ${members[3].user.username}, ${current[3].message_count} viestiä
             5. ${members[4].user.username}, ${current[4].message_count} viestiä**`)
+    if(current.lenght < 6) {
+        leaderboardEmbed.setFooter(`Käyttäjä ${previousWinner} on automaattisesti ulkona tämän päivän kisasta ollessaan eilisen voittaja.`);
+    }
 
     await channel.send(leaderboardEmbed);
 
