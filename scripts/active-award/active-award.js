@@ -111,8 +111,8 @@ database.events.on("connected", async () => {
             3. ${members[2].user.username}, ${current[2].message_count} viestiä
             4. ${members[3].user.username}, ${current[3].message_count} viestiä
             5. ${members[4].user.username}, ${current[4].message_count} viestiä**`)
-    if(current.lenght < 6) {
-        leaderboardEmbed.setFooter(`Käyttäjä ${previousWinner} on automaattisesti ulkona tämän päivän kisasta ollessaan eilisen voittaja.`);
+    if(current.length < 6) {
+        leaderboardEmbed.setFooter(`Käyttäjä ${previousWinner.user.username} on automaattisesti ulkona tämän päivän kisasta ollessaan eilisen voittaja.`);
     }
 
     await channel.send(leaderboardEmbed);
