@@ -73,9 +73,12 @@ database.events.on("connected", async () => {
         if(current[i] == previous[0]) {
             current.splice(i, 1);
             break;
-        }
     }
-    await updateRole("remove", guild, previous[0].userid)
+}
+    if(!await updateRole("remove", guild, previous[0].userid)) {
+        console.log("Attempting to remove the role form the second best user");
+        await updateRole("remove", guild, previous[1].userid);
+    }
     await updateRole("add", guild, current[0].userid)
 
     let members = []
