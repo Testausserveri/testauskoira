@@ -123,7 +123,7 @@ router.get('/authorized', async function (req, res) {
         }
     }))
     .then(() => discordClient.channels.fetch(config.discord.defaultChannel))
-    .then((channel) => channel.send(`${user.login} liittyi Testausserverin GitHub-organisaatioon 🎉! Liity sinäkin: https://koira.testausserveri.fi/github/join`))
+    .then((channel) => channel.send(`${user.login} liittyi Testausserverin GitHub-organisaatioon 🎉! Liity sinäkin: <https://koira.testausserveri.fi/github/join>`))
     .then(() => {
         res.redirect("https://github.com/Testausserveri");
     })
