@@ -1,6 +1,6 @@
-Testausserveri on myöntänyt kaikille jäsenilleen ilmaisen sähköpostiosoitteen jäsenetuna!
+Testausserveri on myöntää jäsenilleen ilmaisen sähköpostiosoitteen jäsenetuna!
 
-Ole hyvä, tässä on sinun: **{MAILBOXNAME}@testausserveri.fi**
+Ole hyvä, tässä on sinun: **{MAILBOXNAME}@koira.testausserveri.fi**
 
 Muutamia seikkoja tästä jäsenedusta:
 - täysin ilmainen, meillä ei ole tähän mitään maksullisuutta
@@ -9,3 +9,5 @@ Muutamia seikkoja tästä jäsenedusta:
 - sähköpostit tulevat suoraan Discordiin, tähän yksityiseen keskusteluun, joka toimii sinun postilaatikkonasi!
 
 Voit käyttää uutta sähköpostiosoitettasi esimerkiksi turhiin nettipalveluihin rekisteröitymiseen tai uutiskirjeiden tilaamiseen. ... tai flexaamiseen :wink: Lisätietoja servullamme!
+
+BTW: Jos haluat **omanimi@testausserveri.fi**, sähköpostiviestien lähettämisen, pääsyn Gmailiin, niin sen kaiken saa liittymällä Testausserveri ryn jäseneksi! Linkki yhdistyksen jäsenhakemuslomakkeeseen #readme kanavalla.
