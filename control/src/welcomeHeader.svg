@@ -5,7 +5,7 @@
   <g id="welcomeLogo" transform="translate(-65 -41)">
     <rect id="Прямоугольник_1" data-name="Прямоугольник 1" width="835" height="313" rx="20" transform="translate(65 41)" fill="#36393f"/>
     <use id="sparkles_2728" transform="translate(724 191)" xlink:href="#image"/>
-    <text id="email" transform="translate(143 202)" fill="#fff" font-size="81" font-family="Helvetica" font-weight="700"><tspan x="0" y="0" style="font-size: [size];">[name]</tspan><tspan fill="#a1a1a1"><tspan x="0" y="67" style="font-size: 0.7rem;">@koira.testausserveri.fi</tspan></tspan></text>
+    <text id="email" transform="translate(143 202)" fill="#fff" font-size="81" font-family="Helvetica" font-weight="700"><tspan x="0" y="0" style="font-size: [size];">[name]</tspan><tspan fill="#a1a1a1"><tspan x="0" y="67" style="font-size: 0.7em;">@koira.testausserveri.fi</tspan></tspan></text>
     <use id="sparkles_2728-2" data-name="sparkles_2728" transform="translate(77 52) scale(1.292)" xlink:href="#image"/>
   </g>
 </svg>
