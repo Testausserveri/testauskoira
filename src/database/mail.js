@@ -105,7 +105,7 @@ class MailDatabase {
      */
     addBlock(from, mailbox, sub = '') {
         return new Promise((resolve, reject) => {
-            this.connection.execute('INSERT INTO `blocks` SET `from`=?, `mailbox`=?, `sub`=?', [from, mailbox, sub])
+            this.connection.execute('INSERT INTO `blocksold` SET `from`=?, `mailbox`=?, `sub`=?', [from, mailbox, sub])
             .then(([data]) => {
                 if (data.affectedRows == 1) {
                     resolve();
@@ -124,7 +124,7 @@ class MailDatabase {
      */
     checkBlock(from, mailbox) {
         return new Promise((resolve, reject) => {
-            this.connection.execute('SELECT `id` FROM `blocks` WHERE `from`=? AND `mailbox`=? AND `sub`=?', [from, mailbox.name, mailbox.sub])
+            this.connection.execute('SELECT `id` FROM `blocksold` WHERE `from`=? AND `mailbox`=? AND `sub`=?', [from, mailbox.name, mailbox.sub])
             .then(([[data]]) => {
                 resolve(data);
             }).catch(reject);
