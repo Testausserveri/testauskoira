@@ -76,7 +76,7 @@ const checkBlock = (discordUser, mailbox, sender) => {
     });
 };
 
-const eolnotice = "\nHUOM! Kaikki Testauskoiran sähköpostiosoitteet siirtyvät @koira.testausserveri.fi alle **1.1.2022 alkaen**. Lue lisää Testausserverin #readme kanavalla.";
+const eolnotice = "HUOM! Kaikki Testauskoiran sähköpostiosoitteet siirtyvät @koira.testausserveri.fi alle **1.1.2022 alkaen**. Lue lisää Testausserverin #readme kanavalla.";
 const deliverMessage = (message, receiver) => {
     resolveReceiver(receiver)
     .then(({discordUser, mailbox}) => checkBlock(discordUser, mailbox, message.from))
@@ -86,7 +86,7 @@ const deliverMessage = (message, receiver) => {
         if (message.text.toString().length < 1500) {
             sendEmbed(discordUser, {
                 title: `Lähettäjä: ${formatAddress(message.from)}\nSaaja: ${formatAddress(message.to)}\n\n${message.subject}`,
-                description: '' + message.text + '' + `\n[Estä](${blockLink}) ${eolnotice}`
+                description: '' + message.text + '' + `\n[Estä](${blockLink})`
             })
         } else {
             let messageChunks = chunkString(message.text.toString(), 1950);
@@ -95,10 +95,11 @@ const deliverMessage = (message, receiver) => {
             })
             messageChunks.forEach((messageChunk, index) => {
                 sendEmbed(discordUser, {
-                    description: '' + messageChunk + '' + (index == messageChunks.length - 1 ? `[Estä](${blockLink}) ${eolnotice}` : '')
+                    description: '' + messageChunk + '' + (index == messageChunks.length - 1 ? `[Estä](${blockLink})` : '')
                 });
             })
         }
+        discordUser.send(eolnotice)
         message.deleteMessage();
     })
     .catch(reason => {
