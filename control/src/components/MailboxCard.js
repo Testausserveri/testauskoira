@@ -36,7 +36,7 @@ function MailboxCard(props) {
 
         const canvas = document.querySelector('canvas');
         const ctx = canvas.getContext('2d');
-        const v = await Canvg.fromString(ctx, welcomeHeaderTemplate.replace('[name]', name).replace('[size]', (name.length > 13 ? '0.7em' : '1em')));
+        const v = await Canvg.fromString(ctx, welcomeHeaderTemplate.replace('[name]', name).replace('[size]', (name.length > 13 ? '0.4em' : '0.7em')));
 
         v.start();
     }
