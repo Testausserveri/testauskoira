@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "cache-manager": "^3.4.1",
-    "discord.js": "^12.5.1",
+    "discord.js": "^13.3.1",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "imap-simple": "^5.0.0",

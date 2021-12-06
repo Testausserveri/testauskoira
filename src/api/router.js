@@ -138,26 +138,6 @@ router.get('/authorized', async function (req, res) {
     })
 });
 
-function parseActivity(activities) {
-    const activityTypes = {
-        'PLAYING': 'Pelaa',
-        'WATCHING': 'Katsoo',
-        'LISTENING': 'Kuuntelee',
-        'STREAMING': 'Striimaa'
-    }
-    if (activities.length > 0) {
-        let {name, type, state, emoji} = activities[0];
-
-        return (type == 'CUSTOM_STATUS'
-            ?
-            `${(emoji ? emoji.name : '')} ${state}`
-            :
-            `${activityTypes[type] || type} ${name}`
-        );
-    } else {
-        return;
-    }
-}
 router.get('/memberInfo', cache(5), async (req, res) => {
     if (req.query.name || req.query.id){
         // Generate roles array
@@ -183,10 +163,24 @@ router.get('/memberInfo', cache(5), async (req, res) => {
                                     name: member.nickname || member.displayName, 
                                     id: member.id, 
                                     presence: { 
-                                        activity: parseActivity(member.presence.activities), 
+                                        activities: member.presence.activities.map(activity => ({
+                                            type: activity.type,
+                                            emoji: activity.emoji,
+                                            name: activity.name,
+                                            details: activity.details,
+                                            state: activity.state,
+                                            assets: {
+                                                largeImage: activity.assets.largeImageURL(),
+                                                largeImageText: activity.assets.largeText,
+                                                smallImage: activity.assets.smallImage(),
+                                                smallImageText: activity.assets.smallText
+                                            }
+                                        })),
                                         status: member.presence.status.toString()
                                     },
-                                    avatar: member.user.displayAvatarURL()
+                                    avatar: member.user.displayAvatarURL(),
+                                    banner: member.user.bannerURL(),
+                                    flags: member.user.flags.toArray()
                                 })
                             )
                         }else {

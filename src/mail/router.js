@@ -2,6 +2,7 @@ const express = require('express');
 const discordClient = require('../discord.js');
 const database = require('../database/database.js');
 const { prettyHtml } = require('../utils');
+const { MessageEmbed } = require('discord.js');
 const router = express.Router();
 
 router.get('/:key/block', function (req, res) {
@@ -19,10 +20,10 @@ router.get('/:key/block', function (req, res) {
                 res.end(prettyHtml(`Estit lähettäjän <b>${from}</b> lähettämästä sähköpostilaatikkoosi <b>${(subMailbox ? subMailbox + '+' + data.mailbox : data.mailbox)}</b>@testausserveri.fi`));
 
                 discordClient.users.fetch(data.userid).then(user => {
-                    user.send({ embed: {
+                    user.send({ embeds: [new MessageEmbed({
                         title: `Kuittaus estosta`,
                         description: `Estit lähettäjän **${from}** lähettämästä sähköpostilaatikkoosi **${(subMailbox ? subMailbox + '+' + data.mailbox : data.mailbox)}**@testausserveri.fi`
-                    }});
+                    })]});
                 });
             })
             .catch(() => {
