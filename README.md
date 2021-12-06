@@ -1,3 +1,12 @@
+**Tämä projekti sammuu lopullisesti 1.1.2022. Koodikantaa ei enää tueta eikä uusia ominaisuuksia oteta vastaan.**
+
+Korvaavat projektit:
+- Throwaway-sähköpostipalvelu: [koirameili](https://github.com/Testausserveri/koirameili)
+- Yleishyödyllinen yhteisöbotti: [testauskoira-rs](https://github.com/Testausserveri/testauskoira-rs)
+- Rajapinnat: [testausapis](https://github.com/Testausserveri/testausapis)
+
+---
+
 <p align="center">
 <img src="https://i.imgur.com/dT8RLvv.png" height="150" alt="Testauskoira">
 </p>
