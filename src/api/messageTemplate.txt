@@ -10,4 +10,4 @@ Muutamia seikkoja tästä jäsenedusta:
 
 Voit käyttää uutta sähköpostiosoitettasi esimerkiksi turhiin nettipalveluihin rekisteröitymiseen tai uutiskirjeiden tilaamiseen. ... tai flexaamiseen :wink: Lisätietoja servullamme!
 
-PS: Jos haluat **omanimi@testausserveri.fi**, sähköpostiviestien lähettämisen, pääsyn Gmailiin, niin sen kaiken saa liittymällä Testausserveri ryn jäseneksi! Linkki yhdistyksen jäsenhakemuslomakkeeseen #readme kanavalla.
+PS: Jos haluat **omanimi@testausserveri.fi**, sähköpostiviestien lähettämisen, pääsyn Gmailiin, niin sen kaiken saa liittymällä Testausserveri ryn jäseneksi! Linkki yhdistyksen jäsenhakemuslomakkeeseen <#798799175072219136> kanavalla.
