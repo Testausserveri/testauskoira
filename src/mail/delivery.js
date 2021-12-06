@@ -44,7 +44,7 @@ const resolveReceiver = (receiver) => {
  */
 const sendEmbed = (discordUser, embedData) => {
     let embed = {color: 0x4881A7, ...embedData};
-    return discordUser.send({embed}).catch(reason => {
+    return discordUser.send({ embeds: embed }).catch(reason => {
         console.log('Could not deliver mail', reason);
     });
 }

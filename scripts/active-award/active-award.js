@@ -105,7 +105,7 @@ database.events.on("connected", async () => {
             4. ${members[3].user.username}, ${current[3].message_count} viestiä
             5. ${members[4].user.username}, ${current[4].message_count} viestiä**`)
 
-    await channel.send(leaderboardEmbed);
+    await channel.send({ embeds: leaderboardEmbed });
 
     process.exit()
 })
